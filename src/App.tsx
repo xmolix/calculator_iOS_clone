@@ -162,17 +162,39 @@ const App: FC = () => {
     setValue(Number(value) / 100)
   }
 
+  function formatNumber(num: number) {
+    if (num >= 1e9) {
+      return num.toExponential(9).replace(/\.?0+e/, 'e');
+    } else {
+      return num.toLocaleString(undefined, { maximumSignificantDigits: 9 });
+    }
+  }
+  const sizeOfValue = (num: number) => String(num).length >= 7
+        ? String(num).length >= 9
+            ? String(num).length >= 10
+                ? String(num).length >= 11
+                    ? classes.calc_field_font_25
+                    : classes.calc_field_font_27
+                : classes.calc_field_font_35
+            : classes.calc_field_font_40
+        : ""
+
   return (
       <main className={classes.main}>
           <section className={classes.section}>
-            <input className={classes.calc_field}
+            <input className={cn(classes.calc_field, value === undefined ? sizeOfValue(Number(valueTwo)) : sizeOfValue(Number(value)))}
                    readOnly
-                   value={value === undefined && valueTwo !== null ? valueTwo : value} />
+                   value={value === undefined && valueTwo !== null
+                       ? formatNumber(Number(valueTwo))
+                       : formatNumber(Number(value))}
+            />
             <div className={classes.row_4_4elem}>
               <button className={cn(classes.btn, classes.btn_func)}
                       onClick={resetValue}>{ value === 0 ? "AC" : "C" }</button>
-              <button className={cn(classes.btn, classes.btn_func)} onClick={reverseOperator}>+/-</button>
-              <button className={cn(classes.btn, classes.btn_func)} onClick={percent}>%</button>
+              <button className={cn(classes.btn, classes.btn_func)}
+                      onClick={reverseOperator}>+/-</button>
+              <button className={cn(classes.btn, classes.btn_func)}
+                      onClick={percent}>%</button>
               <button className={cn(classes.btn, key[3] ? classes.btn_opr_active : classes.btn_opr)}
                       onClick={divide}>/</button>
             </div>
@@ -209,8 +231,10 @@ const App: FC = () => {
             <div className={classes.row_4_3elem}>
               <button className={cn(classes.btn, classes.btn_big, classes.btn_num)}
                       onClick={() => updateValue(0)}>0</button>
-              <button className={cn(classes.btn, classes.btn_num)} onClick={comma}>,</button>
-              <button className={cn(classes.btn, classes.btn_opr)} onClick={equalValues}>=</button>
+              <button className={cn(classes.btn, classes.btn_num)}
+                      onClick={comma}>,</button>
+              <button className={cn(classes.btn, classes.btn_opr)}
+                      onClick={equalValues}>=</button>
             </div>
           </section>
       </main>
